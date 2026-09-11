@@ -148,7 +148,7 @@ function categorySlug(name){
 
 function normalizeDbItem(row){
   const categoryName = row.categories?.name || "";
-  const slug = categorySlug(categoryName || row.name);
+  const slug = (categoryName === "Estética Automotiva" ? categorySlug(row.name) : categorySlug(categoryName || row.name));
   const prices = (row.price || "").split("|").map(x=>x.trim()).filter(Boolean);
   return {
     id: row.id,
@@ -225,7 +225,7 @@ document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
 async function loadContact(){
   try{
     const {data,error}=await supabaseClient.from("site_contact").select("whatsapp,phone,address,instagram").eq("id",1).maybeSingle();
-    if(!error && data) contact={...contact,...data};
+    if(!error && data) contact={...contact, phone:data.phone||"", address:data.address||"", instagram:data.instagram||"", whatsapp:"5585989394926"};
   }catch(e){ console.warn("Contato online indisponível",e); }
   const info=document.getElementById("contactInfo");
   const parts=[];
