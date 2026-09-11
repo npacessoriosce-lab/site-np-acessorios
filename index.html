@@ -58,7 +58,7 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 <p>Limpeza, recuperação do brilho e proteção para o seu veículo, com atendimento profissional e acabamento de alto padrão.</p>
 <div class="actions">
 <a class="btn" href="#servicos">Ver catálogo</a>
-<a class="btn ghost" href="https://wa.me/5585989390000?text=Ol%C3%A1!%20Quero%20agendar%20um%20servi%C3%A7o%20na%20NP%20Acess%C3%B3rios.">Agendar pelo WhatsApp</a>
+<a class="btn ghost" href="https://wa.me/5585989394926?text=Ol%C3%A1!%20Quero%20agendar%20um%20servi%C3%A7o%20na%20NP%20Acess%C3%B3rios.">Agendar pelo WhatsApp</a>
 </div>
 </div></section>
 
@@ -66,10 +66,12 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 <div class="head"><div><div class="tag">Catálogo</div><h2>Serviços <span>NP</span></h2></div>
 <div class="filters">
 <button class="filter active" data-f="all">Todos</button>
-<button class="filter" data-f="lavagens">Lavagens</button>
-<button class="filter" data-f="higienizacao">Higienização</button>
-<button class="filter" data-f="polimentos">Polimentos</button>
-<button class="filter" data-f="protecao">Proteções</button>
+<button class="filter" data-f="estetica">Estética</button>
+<button class="filter" data-f="peliculas">Películas</button>
+<button class="filter" data-f="sons">Sons</button>
+<button class="filter" data-f="iluminacao">Iluminação</button>
+<button class="filter" data-f="starlink">Starlink</button>
+<button class="filter" data-f="acessorios">Acessórios</button>
 </div></div>
 <div id="cards" class="grid"></div>
 </div></section>
@@ -86,7 +88,8 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 
 <section id="contato" class="section contact"><div class="wrap">
 <div class="tag">Agende seu serviço</div><h2>Seu carro em boas mãos.</h2><p>Fale com a NP Acessórios e consulte disponibilidade.</p>
-<a class="btn" href="https://wa.me/5585989390000?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20NP%20Acess%C3%B3rios.">Falar no WhatsApp</a>
+<div id="contactInfo" style="margin:18px 0;color:#aaa;line-height:2"></div>
+<a id="waButton" class="btn" href="https://wa.me/5585989394926?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20NP%20Acess%C3%B3rios.">Falar no WhatsApp</a>
 </div></section>
 
 <footer><div class="wrap">NP Acessórios Automotivos • Estética Automotiva</div></footer>
@@ -115,20 +118,17 @@ const fallbackServices=[
 ];
 
 const labels={
-  lavagens:"Lavagens",
-  higienizacao:"Higienização",
-  polimentos:"Polimentos",
-  protecao:"Proteções",
-  estetica:"Estética Automotiva",
-  acessorios:"Acessórios",
-  offroad:"Off Road",
-  iluminacao:"LED / Iluminação",
+  estetica:"Estética",
   peliculas:"Películas",
-  som:"Som & Multimídia"
+  sons:"Sons",
+  iluminacao:"Iluminação",
+  starlink:"Starlink",
+  acessorios:"Acessórios"
 };
 
 let services = [];
 let filter="all";
+let contact={whatsapp:"5585989394926",phone:"",address:"",instagram:""};
 
 function esc(value){
   return String(value ?? "").replace(/[&<>"']/g, c => ({
@@ -137,15 +137,11 @@ function esc(value){
 }
 
 function categorySlug(name){
-  const n = (name || "").toLowerCase();
-  if(n.includes("higien")) return "higienizacao";
-  if(n.includes("polimento")) return "polimentos";
-  if(n.includes("prote")) return "protecao";
-  if(n.includes("lavagem") || n.includes("brilho") || n.includes("vitrifica")) return n.includes("vitrifica") ? "protecao" : "lavagens";
-  if(n.includes("película")) return "peliculas";
-  if(n.includes("ilumina")) return "iluminacao";
-  if(n.includes("multimídia") || n.includes("som")) return "som";
-  if(n.includes("off road")) return "offroad";
+  const n=(name||"").toLowerCase();
+  if(n.includes("películ") || n.includes("pelicul")) return "peliculas";
+  if(n.includes("starlink")) return "starlink";
+  if(n.includes("ilumina") || n.includes("led")) return "iluminacao";
+  if(n.includes("som") || n.includes("multimídia") || n.includes("multimidia")) return "sons";
   if(n.includes("acess")) return "acessorios";
   return "estetica";
 }
@@ -206,7 +202,7 @@ function render(){
         <h3>${esc(s.name)}</h3>
         <p>${esc(s.description)}</p>
         ${prices}
-        <a class="btn" href="https://wa.me/5585989390000?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre "+s.name)}">Tenho interesse</a>
+        <a class="btn" href="https://wa.me/${contact.whatsapp}?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre "+s.name)}">Tenho interesse</a>
       </div>`;
     box.appendChild(a);
   });
@@ -225,6 +221,21 @@ document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
   filter=b.dataset.f;
   render();
 }));
+
+async function loadContact(){
+  try{
+    const {data,error}=await supabaseClient.from("site_contact").select("whatsapp,phone,address,instagram").eq("id",1).maybeSingle();
+    if(!error && data) contact={...contact,...data};
+  }catch(e){ console.warn("Contato online indisponível",e); }
+  const info=document.getElementById("contactInfo");
+  const parts=[];
+  if(contact.phone) parts.push("📞 "+esc(contact.phone));
+  if(contact.address) parts.push("📍 "+esc(contact.address));
+  if(contact.instagram) parts.push(`📷 <a href="https://instagram.com/${encodeURIComponent(contact.instagram.replace(/^@/, ""))}" target="_blank" style="text-decoration:underline">${esc(contact.instagram)}</a>`);
+  info.innerHTML=parts.join("<br>");
+  const wa=document.getElementById("waButton");
+  wa.href="https://wa.me/"+contact.whatsapp+"?text="+encodeURIComponent("Olá! Vim pelo site da NP Acessórios.");
+}
 
 async function loadServices(){
   try{
@@ -264,6 +275,7 @@ async function loadServices(){
   render();
 }
 
+loadContact();
 loadServices();
 </script>
 </body></html>
