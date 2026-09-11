@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="NP Acessórios — Estética Automotiva. Serviços de lavagem, higienização, polimento e proteção automotiva.">
+<title>NP Acessórios — Estética Automotiva</title>
+<style>
+:root{--bg:#070707;--card:#111;--red:#e50914;--white:#fff;--muted:#aaa;--line:#292929}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:#fff;font-family:Arial,Helvetica,sans-serif}
+a{text-decoration:none;color:inherit}.wrap{width:min(1120px,92%);margin:auto}
+header{position:sticky;top:0;z-index:10;background:rgba(7,7,7,.94);backdrop-filter:blur(10px);border-bottom:1px solid #222}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-size:28px;font-weight:900;letter-spacing:-2px}.logo span{color:var(--red)}
+nav a{margin-left:22px;font-size:12px;font-weight:800;text-transform:uppercase}
+.btn{display:inline-block;background:var(--red);color:#fff;border:0;border-radius:8px;padding:13px 18px;font-weight:800;font-size:12px;cursor:pointer}
+.ghost{background:#151515;border:1px solid #444}
+.hero{min-height:610px;display:flex;align-items:center;background:
+radial-gradient(circle at 80% 30%,rgba(229,9,20,.22),transparent 32%),
+linear-gradient(135deg,#050505 0%,#111 52%,#050505 100%);position:relative;overflow:hidden}
+.hero:after{content:"NP";position:absolute;right:-4vw;bottom:-11vw;font-size:38vw;font-weight:900;line-height:1;color:rgba(255,255,255,.025);pointer-events:none}
+.hero-inner{padding:80px 0;max-width:720px;position:relative;z-index:1}
+.tag{color:#ff3038;font-size:11px;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:clamp(48px,7vw,86px);line-height:.92;margin:16px 0;text-transform:uppercase;letter-spacing:-3px}
+h1 span,h2 span{color:var(--red)}.hero p{color:#ccc;font-size:18px;line-height:1.65;max-width:620px}
+.actions{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.section{padding:78px 0}.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+h2{font-size:40px;line-height:1;margin:7px 0;text-transform:uppercase;letter-spacing:-1px}
+.filters{display:flex;gap:7px;flex-wrap:wrap}.filter{padding:9px 13px;border-radius:30px;background:#111;color:#aaa;border:1px solid #292929;cursor:pointer;font-weight:700}
+.filter.active{background:var(--red);color:#fff;border-color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid #242424;border-radius:14px;overflow:hidden}
+.card-top{height:8px;background:linear-gradient(90deg,var(--red),#7a0006)}
+.body{padding:20px}.body h3{font-size:20px;text-transform:uppercase;margin:7px 0 8px}
+.body p{color:#aaa;font-size:13px;line-height:1.6;min-height:62px}
+.price{padding:10px;background:#1a1a1a;border-left:3px solid var(--red);margin:7px 0;font-size:13px;font-weight:800}
+.card .btn{margin-top:9px}
+.about{background:#0d0d0d;border-block:1px solid #222}.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.about p{color:#aaa;line-height:1.8}.features{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.feature{padding:18px;background:#151515;border:1px solid #292929;border-radius:12px}.feature b{font-size:14px}.feature span{display:block;color:#999;font-size:12px;margin-top:6px;line-height:1.5}
+.contact{text-align:center}.contact p{color:#aaa}.contact .btn{margin-top:12px}
+footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr}nav a:not(.btn){display:none}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.hero{min-height:650px}.head{align-items:flex-start;flex-direction:column}.nav{height:66px}h1{letter-spacing:-2px}.section{padding:60px 0}}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+<a href="#" class="logo">NP<span>.</span></a>
+<nav><a href="#servicos">Serviços</a><a href="#sobre">Sobre</a><a href="#contato" class="btn">WhatsApp</a></nav>
+</div></header>
+
+<section class="hero">
+<div class="wrap hero-inner">
+<div class="tag">NP Acessórios • Estética Automotiva</div>
+<h1>Seu carro.<br><span>Nosso cuidado.</span></h1>
+<p>Limpeza, recuperação do brilho e proteção para o seu veículo, com atendimento profissional e acabamento de alto padrão.</p>
+<div class="actions">
+<a class="btn" href="#servicos">Ver catálogo</a>
+<a class="btn ghost" href="https://wa.me/558598934926?text=Ol%C3%A1!%20Quero%20agendar%20um%20servi%C3%A7o%20na%20NP%20Acess%C3%B3rios.">Agendar pelo WhatsApp</a>
+</div>
+</div></section>
+
+<section id="servicos" class="section"><div class="wrap">
+<div class="head"><div><div class="tag">Catálogo</div><h2>Serviços <span>NP</span></h2></div>
+<div class="filters">
+<button class="filter active" data-f="all">Todos</button>
+<button class="filter" data-f="estetica">Estética</button>
+<button class="filter" data-f="peliculas">Películas</button>
+<button class="filter" data-f="sons">Sons</button>
+<button class="filter" data-f="iluminacao">Iluminação</button>
+<button class="filter" data-f="starlink">Starlink</button>
+<button class="filter" data-f="acessorios">Acessórios</button>
+</div></div>
+<div id="cards" class="grid"></div>
+</div></section>
+
+<section id="sobre" class="section about"><div class="wrap about-grid">
+<div><div class="tag">NP Acessórios</div><h2>Mais que serviços,<br><span>cuidado com o veículo.</span></h2>
+<p>Uma experiência pensada para quem valoriza limpeza, estética e conservação. Consulte nossa equipe para escolher o tratamento ideal para o seu veículo.</p></div>
+<div class="features">
+<div class="feature"><b>Qualidade</b><span>Produtos e processos pensados para cada serviço.</span></div>
+<div class="feature"><b>Atendimento</b><span>Orçamento e agendamento rápidos.</span></div>
+<div class="feature"><b>Acabamento</b><span>Foco nos detalhes e no resultado final.</span></div>
+<div class="feature"><b>Proteção</b><span>Opções para diferentes necessidades.</span></div>
+</div></div></section>
+
+<section id="contato" class="section contact"><div class="wrap">
+<div class="tag">Agende seu serviço</div><h2>Seu carro em boas mãos.</h2><p>Fale com a NP Acessórios e consulte disponibilidade.</p>
+<div id="contactInfo" style="margin:18px 0;color:#aaa;line-height:2"></div>
+<a id="waButton" class="btn" href="https://wa.me/558598934926?text=Ol%C3%A1!%20Vim%20pelo%20site%20da%20NP%20Acess%C3%B3rios.">Falar no WhatsApp</a>
+</div></section>
+
+<footer><div class="wrap">NP Acessórios Automotivos • Estética Automotiva</div></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://okoajymuyewralzfptaf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_scmzRgegxeu1rLUo2vYtYw_2dcL8Aej";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const fallbackServices=[
+["Lavagem Básica","lavagens","Hatch ou Sedan — R$ 70,00","Camionete ou RAM — R$ 90,00","Limpeza externa rápida e eficiente para a manutenção do dia a dia."],
+["Lavagem Detalhada","lavagens","Hatch ou Sedan — a partir de R$ 150,00","Camionete ou RAM — a partir de R$ 200,00","Limpeza completa, com mais cuidado nos detalhes e acabamento."],
+["Brilho Premium","lavagens","Hatch ou Sedan — a partir de R$ 360,00","Camionete ou RAM — a partir de R$ 480,00","Tratamento premium para realçar o brilho e o acabamento do veículo."],
+["Lavagem de Motor","lavagens","A partir de R$ 170,00","","Limpeza cuidadosa do motor para remover sujeira e resíduos."],
+["Lavagem de Chassi","lavagens","A partir de R$ 100,00","","Remoção de barro e impurezas da parte inferior do veículo."],
+["Limpeza de Bancos de Tecido","higienizacao","A partir de R$ 180,00","","Higienização profunda para remover manchas, sujeiras e odores."],
+["Higienização e Hidratação de Bancos","higienizacao","A partir de R$ 200,00","","Limpeza e hidratação para conservar o revestimento e o conforto."],
+["Remoção de Chuva Ácida","higienizacao","A partir de R$ 100,00","","Tratamento para remover marcas e recuperar a aparência da pintura."],
+["Polimento Comercial","polimentos","A partir de R$ 550,00","","Polimento para reduzir marcas leves e devolver brilho à pintura."],
+["Polimento Técnico","polimentos","A partir de R$ 800,00","","Correção profissional para melhorar o acabamento e o brilho."],
+["Vitrificação 1 Ano","protecao","0 km — R$ 999,90","Seminovos — R$ 1.200,00","Proteção da pintura com foco em brilho, resistência e facilidade de limpeza."],
+["Vitrificação 3 Anos","protecao","0 km — R$ 1.100,00","Seminovos — R$ 1.500,00","Proteção prolongada para manter brilho e acabamento por mais tempo."],
+["Vitrificação 5 Anos","protecao","0 km — R$ 1.600,00","Seminovos — R$ 1.800,00","Proteção de longa duração para quem busca o máximo em conservação."],
+["Combo Full Vitrificação","protecao","A partir de R$ 3.000,00","","Proteção completa: couro, vidros, pintura, chassi e plásticos."]
+];
+
+const labels={
+  estetica:"Estética",
+  peliculas:"Películas",
+  sons:"Sons",
+  iluminacao:"Iluminação",
+  starlink:"Starlink",
+  acessorios:"Acessórios"
+};
+
+let services = [];
+let filter="all";
+let contact={whatsapp:"558598934926",phone:"",address:"",instagram:""};
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+
+function categorySlug(name){
+  const n=(name||"").toLowerCase();
+  if(n.includes("películ") || n.includes("pelicul")) return "peliculas";
+  if(n.includes("starlink")) return "starlink";
+  if(n.includes("ilumina") || n.includes("led")) return "iluminacao";
+  if(n.includes("som") || n.includes("multimídia") || n.includes("multimidia")) return "sons";
+  if(n.includes("acess")) return "acessorios";
+  return "estetica";
+}
+
+function normalizeDbItem(row){
+  const categoryName = row.categories?.name || "";
+  const slug = categorySlug(categoryName || row.name);
+  const prices = (row.price || "").split("|").map(x=>x.trim()).filter(Boolean);
+  return {
+    id: row.id,
+    name: row.name || "",
+    category: slug,
+    categoryName: categoryName || labels[slug] || "Estética Automotiva",
+    subtitle: row.subtitle || "",
+    prices,
+    description: row.description || "",
+    image_url: row.image_url || "",
+    featured: !!row.featured
+  };
+}
+
+function normalizeFallbackItem(s){
+  return {
+    id: "fallback-"+s[0],
+    name:s[0],
+    category:s[1],
+    categoryName:labels[s[1]] || s[1],
+    subtitle:"",
+    prices:[s[2],s[3]].filter(Boolean),
+    description:s[4],
+    image_url:"",
+    featured:false
+  };
+}
+
+function render(){
+  const box=document.getElementById("cards");
+  box.innerHTML="";
+  const list=services.filter(s=>filter==="all"||s.category===filter);
+
+  if(!list.length){
+    box.innerHTML='<p style="color:#aaa">Nenhum serviço encontrado nesta categoria.</p>';
+    return;
+  }
+
+  list.forEach(s=>{
+    const a=document.createElement("article");
+    a.className="card";
+    const prices=s.prices.map(p=>`<div class="price">${esc(p)}</div>`).join("");
+    const image=s.image_url
+      ? `<div style="height:150px;background:#151515 url('${esc(s.image_url)}') center/cover no-repeat"></div>`
+      : "";
+    a.innerHTML=`
+      <div class="card-top"></div>
+      ${image}
+      <div class="body">
+        <div class="tag" style="font-size:9px">${esc(s.categoryName)}</div>
+        <h3>${esc(s.name)}</h3>
+        <p>${esc(s.description)}</p>
+        ${prices}
+        <a class="btn" href="https://wa.me/" + contact.whatsapp + "?text="+encodeURIComponent("Olá! Gostaria de saber mais sobre "+s.name)>Tenho interesse</a>
+      </div>`;
+    box.appendChild(a);
+  });
+}
+
+function updateFilters(){
+  const used = new Set(services.map(s=>s.category));
+  document.querySelectorAll(".filter").forEach(b=>{
+    if(b.dataset.f !== "all") b.style.display = used.has(b.dataset.f) ? "" : "none";
+  });
+}
+
+document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  filter=b.dataset.f;
+  render();
+}));
+
+async function loadContact(){
+  try{
+    const {data,error}=await supabaseClient.from("site_contact").select("whatsapp,phone,address,instagram").eq("id",1).maybeSingle();
+    if(!error && data) contact={...contact,...data};
+  }catch(e){ console.warn("Contato online indisponível",e); }
+  const info=document.getElementById("contactInfo");
+  const parts=[];
+  if(contact.phone) parts.push("📞 "+esc(contact.phone));
+  if(contact.address) parts.push("📍 "+esc(contact.address));
+  if(contact.instagram) parts.push("📷 <a href="https://instagram.com/"+encodeURIComponent(contact.instagram.replace(/^@/, ""))+" target="_blank" style="text-decoration:underline">"+esc(contact.instagram)+"</a>");
+  info.innerHTML=parts.join("<br>");
+  const wa=document.getElementById("waButton");
+  wa.href="https://wa.me/"+contact.whatsapp+"?text="+encodeURIComponent("Olá! Vim pelo site da NP Acessórios.");
+}
+
+async function loadServices(){
+  try{
+    const {data,error}=await supabaseClient
+      .from("catalog_items")
+      .select("id,name,subtitle,price,description,image_url,featured,published,category_id")
+      .eq("published",true)
+      .order("created_at",{ascending:true});
+
+    if(error) throw error;
+
+    const categoryIds=[...new Set((data || []).map(x=>x.category_id).filter(Boolean))];
+    let categoryMap={};
+
+    if(categoryIds.length){
+      const {data:cats,error:catError}=await supabaseClient
+        .from("categories")
+        .select("id,name,icon")
+        .in("id",categoryIds);
+
+      if(!catError){
+        (cats || []).forEach(c=>categoryMap[c.id]=c);
+      }
+    }
+
+    services=(data || []).map(row=>{
+      row.categories=categoryMap[row.category_id] || null;
+      return normalizeDbItem(row);
+    });
+    if(!services.length) services=fallbackServices.map(normalizeFallbackItem);
+  }catch(error){
+    console.warn("Não foi possível carregar o catálogo online. Usando catálogo local.", error);
+    services=fallbackServices.map(normalizeFallbackItem);
+  }
+
+  updateFilters();
+  render();
+}
+
+loadContact();
+loadServices();
+</script>
+</body></html>
