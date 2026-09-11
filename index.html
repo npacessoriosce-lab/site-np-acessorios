@@ -230,13 +230,30 @@ async function loadServices(){
   try{
     const {data,error}=await supabaseClient
       .from("catalog_items")
-      .select("id,name,subtitle,price,description,image_url,featured,published,categories(name,icon)")
+      .select("id,name,subtitle,price,description,image_url,featured,published,category_id")
       .eq("published",true)
       .order("created_at",{ascending:true});
 
     if(error) throw error;
 
-    services=(data || []).map(normalizeDbItem);
+    const categoryIds=[...new Set((data || []).map(x=>x.category_id).filter(Boolean))];
+    let categoryMap={};
+
+    if(categoryIds.length){
+      const {data:cats,error:catError}=await supabaseClient
+        .from("categories")
+        .select("id,name,icon")
+        .in("id",categoryIds);
+
+      if(!catError){
+        (cats || []).forEach(c=>categoryMap[c.id]=c);
+      }
+    }
+
+    services=(data || []).map(row=>{
+      row.categories=categoryMap[row.category_id] || null;
+      return normalizeDbItem(row);
+    });
     if(!services.length) services=fallbackServices.map(normalizeFallbackItem);
   }catch(error){
     console.warn("Não foi possível carregar o catálogo online. Usando catálogo local.", error);
