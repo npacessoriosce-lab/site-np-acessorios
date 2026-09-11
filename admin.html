@@ -40,6 +40,26 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px
   </div>
 
   <div class="panel">
+    <h2>Informações de contato do site</h2><p class="muted" style="margin-top:-10px">Edite aqui os dados que aparecem no site público.</p>
+    <div class="grid">
+      <label>WhatsApp
+        <input id="c_whatsapp" placeholder="558598934926">
+      </label>
+      <label>Telefone
+        <input id="c_phone" placeholder="(85) 0000-0000">
+      </label>
+      <label>Endereço
+        <input id="c_address" placeholder="Rua, número, bairro, Fortaleza - CE">
+      </label>
+      <label>Instagram
+        <input id="c_instagram" placeholder="@npacessorios">
+      </label>
+    </div>
+    <div class="actions"><button class="btn red" id="saveContact">Salvar contatos</button></div>
+    <div id="contactMsg"></div>
+  </div>
+
+  <div class="panel">
     <h2 id="formTitle">Adicionar serviço</h2>
     <div class="grid">
       <label>Nome
@@ -102,9 +122,25 @@ function loginMsg(text,ok=false){$("loginMsg").className=ok?"success":"error";$(
 
 async function init(){
   const {data:{session}}=await sb.auth.getSession();
-  if(session){showApp();load()}
+  if(session){showApp();load();loadContact()}
 }
 function showApp(){ $("login").style.display="none"; $("app").style.display="block" }
+
+async function loadContact(){
+  const {data,error}=await sb.from("site_contact").select("whatsapp,phone,address,instagram").eq("id",1).maybeSingle();
+  if(error){document.getElementById("contactMsg").textContent="Crie a tabela de contatos no Supabase primeiro.";return}
+  if(data){
+    $("c_whatsapp").value=data.whatsapp||"";
+    $("c_phone").value=data.phone||"";
+    $("c_address").value=data.address||"";
+    $("c_instagram").value=data.instagram||"";
+  }
+}
+
+$("saveContact").onclick=async()=>{
+  const {error}=await sb.from("site_contact").upsert({id:1,whatsapp:$('c_whatsapp').value.replace(/\D/g,''),phone:$('c_phone').value.trim(),address:$('c_address').value.trim(),instagram:$('c_instagram').value.trim(),updated_at:new Date().toISOString()});
+  const el=$("contactMsg"); el.className=error?"error":"success"; el.textContent=error?"Erro: "+error.message:"Contatos salvos!";
+};
 
 async function loadCategories(){
   const {data,error}=await sb.from("categories").select("id,name").order("name");
