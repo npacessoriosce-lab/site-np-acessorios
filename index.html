@@ -91,8 +91,13 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 
 <footer><div class="wrap">NP Acessórios Automotivos • Estética Automotiva</div></footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const services=[
+const SUPABASE_URL = "https://okoajymuyewralzfptaf.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_scmzRgegxeu1rLUo2vYtYw_2dcL8Aej";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const fallbackServices=[
 ["Lavagem Básica","lavagens","Hatch ou Sedan — R$ 70,00","Camionete ou RAM — R$ 90,00","Limpeza externa rápida e eficiente para a manutenção do dia a dia."],
 ["Lavagem Detalhada","lavagens","Hatch ou Sedan — a partir de R$ 150,00","Camionete ou RAM — a partir de R$ 200,00","Limpeza completa, com mais cuidado nos detalhes e acabamento."],
 ["Brilho Premium","lavagens","Hatch ou Sedan — a partir de R$ 360,00","Camionete ou RAM — a partir de R$ 480,00","Tratamento premium para realçar o brilho e o acabamento do veículo."],
@@ -108,21 +113,140 @@ const services=[
 ["Vitrificação 5 Anos","protecao","0 km — R$ 1.600,00","Seminovos — R$ 1.800,00","Proteção de longa duração para quem busca o máximo em conservação."],
 ["Combo Full Vitrificação","protecao","A partir de R$ 3.000,00","","Proteção completa: couro, vidros, pintura, chassi e plásticos."]
 ];
-const labels={lavagens:"Lavagens",higienizacao:"Higienização",polimentos:"Polimentos",protecao:"Proteções"};
+
+const labels={
+  lavagens:"Lavagens",
+  higienizacao:"Higienização",
+  polimentos:"Polimentos",
+  protecao:"Proteções",
+  estetica:"Estética Automotiva",
+  acessorios:"Acessórios",
+  offroad:"Off Road",
+  iluminacao:"LED / Iluminação",
+  peliculas:"Películas",
+  som:"Som & Multimídia"
+};
+
+let services = [];
 let filter="all";
-function render(){
- const box=document.getElementById("cards"); box.innerHTML="";
- services.filter(s=>filter==="all"||s[1]===filter).forEach(s=>{
-  const a=document.createElement("article"); a.className="card";
-  const prices=(s[2]?`<div class="price">${s[2]}</div>`:"")+(s[3]?`<div class="price">${s[3]}</div>`:"");
-  a.innerHTML=`<div class="card-top"></div><div class="body"><div class="tag" style="font-size:9px">${labels[s[1]]}</div><h3>${s[0]}</h3><p>${s[4]}</p>${prices}<a class="btn" href="https://wa.me/5585989390000?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre "+s[0])}">Tenho interesse</a></div>`;
-  box.appendChild(a);
- });
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
 }
+
+function categorySlug(name){
+  const n = (name || "").toLowerCase();
+  if(n.includes("higien")) return "higienizacao";
+  if(n.includes("polimento")) return "polimentos";
+  if(n.includes("prote")) return "protecao";
+  if(n.includes("lavagem") || n.includes("brilho") || n.includes("vitrifica")) return n.includes("vitrifica") ? "protecao" : "lavagens";
+  if(n.includes("película")) return "peliculas";
+  if(n.includes("ilumina")) return "iluminacao";
+  if(n.includes("multimídia") || n.includes("som")) return "som";
+  if(n.includes("off road")) return "offroad";
+  if(n.includes("acess")) return "acessorios";
+  return "estetica";
+}
+
+function normalizeDbItem(row){
+  const categoryName = row.categories?.name || "";
+  const slug = categorySlug(categoryName || row.name);
+  const prices = (row.price || "").split("|").map(x=>x.trim()).filter(Boolean);
+  return {
+    id: row.id,
+    name: row.name || "",
+    category: slug,
+    categoryName: categoryName || labels[slug] || "Estética Automotiva",
+    subtitle: row.subtitle || "",
+    prices,
+    description: row.description || "",
+    image_url: row.image_url || "",
+    featured: !!row.featured
+  };
+}
+
+function normalizeFallbackItem(s){
+  return {
+    id: "fallback-"+s[0],
+    name:s[0],
+    category:s[1],
+    categoryName:labels[s[1]] || s[1],
+    subtitle:"",
+    prices:[s[2],s[3]].filter(Boolean),
+    description:s[4],
+    image_url:"",
+    featured:false
+  };
+}
+
+function render(){
+  const box=document.getElementById("cards");
+  box.innerHTML="";
+  const list=services.filter(s=>filter==="all"||s.category===filter);
+
+  if(!list.length){
+    box.innerHTML='<p style="color:#aaa">Nenhum serviço encontrado nesta categoria.</p>';
+    return;
+  }
+
+  list.forEach(s=>{
+    const a=document.createElement("article");
+    a.className="card";
+    const prices=s.prices.map(p=>`<div class="price">${esc(p)}</div>`).join("");
+    const image=s.image_url
+      ? `<div style="height:150px;background:#151515 url('${esc(s.image_url)}') center/cover no-repeat"></div>`
+      : "";
+    a.innerHTML=`
+      <div class="card-top"></div>
+      ${image}
+      <div class="body">
+        <div class="tag" style="font-size:9px">${esc(s.categoryName)}</div>
+        <h3>${esc(s.name)}</h3>
+        <p>${esc(s.description)}</p>
+        ${prices}
+        <a class="btn" href="https://wa.me/5585989390000?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre "+s.name)}">Tenho interesse</a>
+      </div>`;
+    box.appendChild(a);
+  });
+}
+
+function updateFilters(){
+  const used = new Set(services.map(s=>s.category));
+  document.querySelectorAll(".filter").forEach(b=>{
+    if(b.dataset.f !== "all") b.style.display = used.has(b.dataset.f) ? "" : "none";
+  });
+}
+
 document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
- document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
- b.classList.add("active"); filter=b.dataset.f; render();
+  document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  filter=b.dataset.f;
+  render();
 }));
-render();
+
+async function loadServices(){
+  try{
+    const {data,error}=await supabaseClient
+      .from("catalog_items")
+      .select("id,name,subtitle,price,description,image_url,featured,published,categories(name,icon)")
+      .eq("published",true)
+      .order("created_at",{ascending:true});
+
+    if(error) throw error;
+
+    services=(data || []).map(normalizeDbItem);
+    if(!services.length) services=fallbackServices.map(normalizeFallbackItem);
+  }catch(error){
+    console.warn("Não foi possível carregar o catálogo online. Usando catálogo local.", error);
+    services=fallbackServices.map(normalizeFallbackItem);
+  }
+
+  updateFilters();
+  render();
+}
+
+loadServices();
 </script>
 </body></html>
