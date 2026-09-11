@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NP Acessórios — Painel</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#090909;color:#fff;font-family:Arial,Helvetica,sans-serif}
+.wrap{max-width:1100px;margin:auto;padding:28px 20px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.logo{font-size:28px;font-weight:900}.logo i{color:#ed1018;font-style:normal}.btn{border:0;border-radius:8px;padding:12px 18px;font-weight:800;cursor:pointer}.red{background:#ed1018;color:#fff}.dark{background:#1b1b1b;color:#fff;border:1px solid #333}
+.panel{background:#111;border:1px solid #292929;border-radius:14px;padding:22px;margin-bottom:20px}
+h1{margin:0 0 6px;font-size:28px}h2{font-size:18px;margin:0 0 18px}.muted{color:#aaa}
+input,textarea,select{width:100%;background:#0a0a0a;color:#fff;border:1px solid #3a3a3a;border-radius:8px;padding:12px;margin-top:7px}
+textarea{min-height:90px;resize:vertical}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.full{grid-column:1/-1}
+label{font-size:13px;font-weight:700;color:#ddd}.actions{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px;border-bottom:1px solid #292929;vertical-align:middle}th{color:#aaa;font-size:12px}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;background:#1d1d1d;color:#ddd;font-size:11px}.on{color:#6ee7a0}.off{color:#ff8a8a}
+#login{max-width:430px;margin:70px auto}.error{color:#ff7777;margin-top:10px}.success{color:#6ee7a0;margin-top:10px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.full{grid-column:auto}table{font-size:12px}.hide-mobile{display:none}}
+</style>
+</head>
+<body>
+<div id="login" class="panel">
+  <div class="logo">NP<span>.</span></div>
+  <h1 style="margin-top:18px">Painel administrativo</h1>
+  <p class="muted">Entre para administrar os serviços do site.</p>
+  <label>E-mail<input id="email" type="email" autocomplete="username"></label><br>
+  <label>Senha<input id="password" type="password" autocomplete="current-password"></label>
+  <div class="actions"><button class="btn red" id="loginBtn">Entrar</button></div>
+  <div id="loginMsg"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none">
+  <div class="top">
+    <div><div class="logo">NP<span>.</span></div><div class="muted">Painel de serviços</div></div>
+    <button class="btn dark" id="logout">Sair</button>
+  </div>
+
+  <div class="panel">
+    <h2 id="formTitle">Adicionar serviço</h2>
+    <div class="grid">
+      <label>Nome
+        <input id="name" placeholder="Ex.: Lavagem Detalhada">
+      </label>
+      <label>Categoria
+        <select id="category"></select>
+      </label>
+      <label>Subtítulo
+        <input id="subtitle" placeholder="Opcional">
+      </label>
+      <label>Preço
+        <input id="price" placeholder="Ex.: A partir de R$ 150,00">
+      </label>
+      <label class="full">Descrição
+        <textarea id="description" placeholder="Descrição do serviço"></textarea>
+      </label>
+      <label>URL da foto (opcional)
+        <input id="image_url" placeholder="https://...">
+      </label>
+      <label style="display:flex;align-items:end;gap:10px;padding-bottom:12px">
+        <input id="published" type="checkbox" checked style="width:auto;margin:0"> Publicado no site
+      </label>
+    </div>
+    <div class="actions">
+      <button class="btn red" id="save">Salvar serviço</button>
+      <button class="btn dark" id="cancel" style="display:none">Cancelar edição</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Serviços cadastrados</h2>
+    <div style="overflow:auto"><table>
+      <thead><tr><th>Nome</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL="https://okoajymuyewralzfptaf.supabase.co";
+const SUPABASE_KEY="sb_publishable_scmzRgegxeu1rLUo2vYtYw_2dcL8Aej";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let editingId=null,categories=[];
+
+const $=id=>document.getElementById(id);
+function msg(text,ok=false){$("msg").className=ok?"success":"error";$("msg").textContent=text}
+function loginMsg(text,ok=false){$("loginMsg").className=ok?"success":"error";$("loginMsg").textContent=text}
+
+async function init(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){showApp();load()}
+}
+function showApp(){ $("login").style.display="none"; $("app").style.display="block" }
+
+async function loadCategories(){
+  const {data,error}=await sb.from("categories").select("id,name").order("name");
+  if(error){msg("Erro ao carregar categorias: "+error.message);return}
+  categories=data||[];
+  $("category").innerHTML=categories.map(c=>`<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
+}
+async function load(){
+  await loadCategories();
+  const {data,error}=await sb.from("catalog_items")
+    .select("id,name,subtitle,price,description,image_url,featured,published,category_id,categories(name)")
+    .order("created_at",{ascending:true});
+  if(error){msg("Erro ao carregar serviços: "+error.message);return}
+  $("rows").innerHTML=(data||[]).map(r=>`
+    <tr>
+      <td><b>${escapeHtml(r.name)}</b></td>
+      <td>${escapeHtml(r.categories?.name||"")}</td>
+      <td>${escapeHtml(r.price||"")}</td>
+      <td><span class="badge ${r.published?"on":"off"}">${r.published?"Publicado":"Oculto"}</span></td>
+      <td><button class="btn dark" onclick='editItem(${JSON.stringify(r).replace(/'/g,"&#39;")})'>Editar</button>
+      <button class="btn dark" onclick="toggleItem('${r.id}',${r.published})">${r.published?"Ocultar":"Publicar"}</button>
+      <button class="btn dark" onclick="deleteItem('${r.id}')">Excluir</button></td>
+    </tr>`).join("");
+}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+window.editItem=r=>{
+  editingId=r.id;$("formTitle").textContent="Editar serviço";
+  $("name").value=r.name||"";$("subtitle").value=r.subtitle||"";$("price").value=r.price||"";
+  $("description").value=r.description||"";$("image_url").value=r.image_url||"";
+  $("published").checked=!!r.published;$("category").value=r.category_id||"";
+  $("cancel").style.display="inline-block";window.scrollTo({top:0,behavior:"smooth"});msg("");
+}
+$("cancel").onclick=()=>{editingId=null;$("formTitle").textContent="Adicionar serviço";["name","subtitle","price","description","image_url"].forEach(x=>$(x).value="");$("published").checked=true;$("cancel").style.display="none";msg("")}
+$("save").onclick=async()=>{
+  const payload={name:$("name").value.trim(),category_id:$("category").value,subtitle:$("subtitle").value.trim(),price:$("price").value.trim(),description:$("description").value.trim(),image_url:$("image_url").value.trim()||null,published:$("published").checked,updated_at:new Date().toISOString()};
+  if(!payload.name||!payload.category_id){msg("Preencha nome e categoria.");return}
+  let res=editingId?await sb.from("catalog_items").update(payload).eq("id",editingId):await sb.from("catalog_items").insert(payload);
+  if(res.error){msg("Erro: "+res.error.message);return}
+  msg(editingId?"Serviço atualizado!":"Serviço adicionado!",true);
+  $("cancel").click();await load();
+}
+window.toggleItem=async(id,current)=>{
+  const {error}=await sb.from("catalog_items").update({published:!current,updated_at:new Date().toISOString()}).eq("id",id);
+  if(error){msg("Erro: "+error.message);return} await load();
+}
+window.deleteItem=async id=>{
+  if(!confirm("Excluir este serviço?"))return;
+  const {error}=await sb.from("catalog_items").delete().eq("id",id);
+  if(error){msg("Erro: "+error.message);return} await load();
+}
+$("loginBtn").onclick=async()=>{
+  loginMsg("");
+  const {error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+  if(error){loginMsg("E-mail ou senha inválidos.");return}
+  showApp();load();
+}
+$("logout").onclick=async()=>{await sb.auth.signOut();location.reload()}
+init();
+</script>
+</body>
+</html>
