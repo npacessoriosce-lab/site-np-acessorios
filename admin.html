@@ -59,6 +59,22 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px
     <div id="contactMsg"></div>
   </div>
 
+
+  <div class="panel">
+    <h2>Sobre nós</h2>
+    <p class="muted" style="margin-top:-10px">Edite o texto que aparece na seção “Sobre nós” do site.</p>
+    <div class="grid">
+      <label>Título
+        <input id="about_title" placeholder="Ex.: Mais que uma loja, soluções para seu veículo.">
+      </label>
+      <label class="full">Texto
+        <textarea id="about_text" style="min-height:150px" placeholder="Escreva aqui a apresentação da NP Acessórios."></textarea>
+      </label>
+    </div>
+    <div class="actions"><button class="btn red" id="saveAbout">Salvar Sobre nós</button></div>
+    <div id="aboutMsg"></div>
+  </div>
+
   <div class="panel">
     <h2 id="formTitle">Adicionar serviço</h2>
     <div class="grid">
@@ -75,16 +91,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px 8px
         <input id="price" placeholder="Ex.: A partir de R$ 150,00">
       </label>
       <label class="full">Descrição
-        <textarea id="description" rows="12" placeholder="Ex.: 🧽 LAVAGEM EXTERNA
-Lavagem em 2 etapas com Snow Foam — V-Mol + V-Floc.
-Limpeza detalhada de rodas e caixas de roda.
-
-🚗 LIMPEZA EXTERNA
-Limpeza detalhada de plásticos e acabamentos externos.
-Descontaminação da pintura.
-
-🧼 LIMPEZA INTERNA
-Aspiração completa de bancos, carpetes e tapetes."></textarea><div class="hint">Use Enter para separar linhas e uma linha em branco para separar blocos. Comece títulos com emoji + MAIÚSCULAS.</div>
+        <textarea id="description" placeholder="Descrição do serviço"></textarea>
       </label>
 
       <label>Foto do serviço
@@ -131,7 +138,7 @@ function loginMsg(text,ok=false){$("loginMsg").className=ok?"success":"error";$(
 
 async function init(){
   const {data:{session}}=await sb.auth.getSession();
-  if(session){showApp();load();loadContact()}
+  if(session){showApp();load();loadContact();loadAbout()}
 }
 function showApp(){ $("login").style.display="none"; $("app").style.display="block" }
 
@@ -149,6 +156,20 @@ async function loadContact(){
 $("saveContact").onclick=async()=>{
   const {error}=await sb.from("site_contact").upsert({id:1,whatsapp:$('c_whatsapp').value.replace(/\D/g,''),phone:$('c_phone').value.trim(),address:$('c_address').value.trim(),instagram:$('c_instagram').value.trim(),updated_at:new Date().toISOString()});
   const el=$("contactMsg"); el.className=error?"error":"success"; el.textContent=error?"Erro: "+error.message:"Contatos salvos!";
+};
+
+async function loadAbout(){
+  const {data,error}=await sb.from("site_about").select("title,text").eq("id",1).maybeSingle();
+  if(error){ document.getElementById("aboutMsg").textContent="Crie a tabela Sobre nós no Supabase primeiro."; return; }
+  if(data){
+    $("about_title").value=data.title||"";
+    $("about_text").value=data.text||"";
+  }
+}
+
+$("saveAbout").onclick=async()=>{
+  const {error}=await sb.from("site_about").upsert({id:1,title:$("about_title").value.trim(),text:$("about_text").value.trim(),updated_at:new Date().toISOString()});
+  const el=$("aboutMsg"); el.className=error?"error":"success"; el.textContent=error?"Erro: "+error.message:"Sobre nós salvo!";
 };
 
 async function loadCategories(){
