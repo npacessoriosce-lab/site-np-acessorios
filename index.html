@@ -44,7 +44,11 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr}nav a:not(.btn){display:none}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.hero{min-height:650px}.head{align-items:flex-start;flex-direction:column}.nav{height:66px}h1{letter-spacing:-2px}.section{padding:60px 0}}
 </style>
-</head>
+<style>
+.description{margin:14px 0 16px;color:#ddd;line-height:1.55;font-size:14px}
+.desc-title{font-weight:800;color:#fff;font-size:13px;margin-top:12px;margin-bottom:4px;letter-spacing:.2px}
+.desc-line{margin:2px 0}.desc-gap{height:7px}
+</style></head>
 <body>
 <header><div class="wrap nav">
 <a href="#" class="logo">NP<span>.</span></a>
@@ -135,6 +139,16 @@ function esc(value){
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[c]));
 }
+function formatDescription(value){
+  const text=String(value||"").replace(/\\r\\n/g,"\\n").trim();
+  if(!text) return "";
+  return text.split("\\n").map(line=>{
+    const t=line.trim();
+    if(!t) return '<div class="desc-gap"></div>';
+    const isTitle=/^(?:[^\\w\\s]\\s*)?[A-ZÁÀÃÂÉÊÍÓÔÕÚÇ0-9][A-ZÁÀÃÂÉÊÍÓÔÕÚÇ0-9\\s&+\\-\/]*$/.test(t);
+    return isTitle ? '<div class="desc-title">'+esc(t)+'</div>' : '<div class="desc-line">'+esc(t)+'</div>';
+  }).join("");
+}
 
 function categorySlug(name){
   const n=(name||"").toLowerCase();
@@ -200,7 +214,7 @@ function render(){
       <div class="body">
         <div class="tag" style="font-size:9px">${esc(s.categoryName)}</div>
         <h3>${esc(s.name)}</h3>
-        <p>${esc(s.description)}</p>
+        <div class="description">${formatDescription(s.description)}</div>
         ${prices}
         <a class="btn" href="https://wa.me/${contact.whatsapp}?text=${encodeURIComponent("Olá! Gostaria de saber mais sobre "+s.name)}">Tenho interesse</a>
       </div>`;
