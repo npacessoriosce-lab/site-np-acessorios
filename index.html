@@ -44,11 +44,13 @@ footer{padding:28px 0;border-top:1px solid #222;color:#777;font-size:12px}
 @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.about-grid{grid-template-columns:1fr}nav a:not(.btn){display:none}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.hero{min-height:650px}.head{align-items:flex-start;flex-direction:column}.nav{height:66px}h1{letter-spacing:-2px}.section{padding:60px 0}}
 </style>
+
 <style>
 .description{margin:14px 0 16px;color:#ddd;line-height:1.55;font-size:14px}
-.desc-title{font-weight:800;color:#fff;font-size:13px;margin-top:12px;margin-bottom:4px;letter-spacing:.2px}
+.desc-title{font-weight:800;color:#fff;font-size:13px;margin-top:12px;margin-bottom:4px}
 .desc-line{margin:2px 0}.desc-gap{height:7px}
-</style></head>
+</style>
+</head>
 <body>
 <header><div class="wrap nav">
 <a href="#" class="logo">NP<span>.</span></a>
@@ -139,15 +141,17 @@ function esc(value){
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
   }[c]));
 }
+
 function formatDescription(value){
-  const text=String(value||"").replace(/\\r\\n/g,"\\n").trim();
-  if(!text) return "";
-  return text.split("\\n").map(line=>{
+  const text=String(value||'').replace(/\r\n/g,'\n').trim();
+  if(!text) return '';
+  return text.split('\n').map(line=>{
     const t=line.trim();
     if(!t) return '<div class="desc-gap"></div>';
-    const isTitle=/^(?:[^\\w\\s]\\s*)?[A-ZÁÀÃÂÉÊÍÓÔÕÚÇ0-9][A-ZÁÀÃÂÉÊÍÓÔÕÚÇ0-9\\s&+\\-\/]*$/.test(t);
+    const plain=t.replace(/^[^A-Za-zÀ-ÿ0-9]+/,'').trim();
+    const isTitle=plain && plain === plain.toUpperCase() && plain.length <= 60;
     return isTitle ? '<div class="desc-title">'+esc(t)+'</div>' : '<div class="desc-line">'+esc(t)+'</div>';
-  }).join("");
+  }).join('');
 }
 
 function categorySlug(name){
